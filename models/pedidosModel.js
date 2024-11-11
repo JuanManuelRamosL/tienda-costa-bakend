@@ -11,14 +11,21 @@ const Pedido = {
         return result.rows[0];
     },
 
-    create: async (pedido) => {
-        const { direccion, nombre, email, pagado } = pedido;
+    create: async (pedidoData) => {
         const result = await pool.query(
-            'INSERT INTO pedidos (direccion, nombre, email, pagado) VALUES ($1, $2, $3, $4) RETURNING *',
-            [direccion, nombre, email, pagado || '']
+          'INSERT INTO pedidos (direccion, nombre, email, pagado, payment_id) VALUES ($1, $2, $3, $4, $5) RETURNING *',
+          [pedidoData.direccion, pedidoData.nombre, pedidoData.email, pedidoData.pagado, pedidoData.payment_id]
         );
         return result.rows[0];
-    },
+      },
+    
+      updateStatusByPaymentId: async (paymentId, data) => {
+        const result = await pool.query(
+          'UPDATE pedidos SET pagado = $1 WHERE payment_id = $2 RETURNING *',
+          [data.pagado, paymentId]
+        );
+        return result.rows[0];
+      },
 
     update: async (id, pedido) => {
         const { direccion, nombre, email, pagado } = pedido;
