@@ -57,7 +57,7 @@ const recibeWebhook = async (req, res) => {
       // Obtiene información detallada del pago usando el ID de pago
       const paymentInfo = await axios.get(`https://api.mercadopago.com/v1/payments/${id}`, {
         headers: {
-          Authorization: `Bearer ${process.env.MERCADOPAGO_ACCESS_TOKEN}`
+          Authorization: `Bearer APP_USR-606095260540143-111014-79210c1a47e51601f405331300802dfc-2090297928`
         }
       });
 console.log(paymentInfo.data)
