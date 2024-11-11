@@ -18,7 +18,7 @@ const createOrder = async (req, res) => {
     const response = await preference.create({
       body: {
         items: [{ title, quantity, unit_price }],
-        notification_url: "https://r3dgnqr9-3000.brs.devtunnels.ms/api/webhook"
+        notification_url: "https://tienda-costa-bakend.vercel.app/api/webhook"
       },
     });
 
