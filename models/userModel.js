@@ -1,24 +1,21 @@
 // models/userModel.js
 const pool = require('../config/database');
-const bcrypt = require('bcrypt');
 
 const User = {
     create: async (user) => {
         const { name, email, password, photo } = user;
-        const hashedPassword = password ? await bcrypt.hash(password, 10) : null;
         const result = await pool.query(
             'INSERT INTO users (name, email, password, photo) VALUES ($1, $2, $3, $4) RETURNING *',
-            [name, email, hashedPassword, photo]
+            [name, email, password, photo] // almacena la contraseña en texto plano
         );
         return result.rows[0];
     },
 
     update: async (id, user) => {
         const { name, email, password, photo } = user;
-        const hashedPassword = password ? await bcrypt.hash(password, 10) : null;
         const result = await pool.query(
             'UPDATE users SET name = $1, email = $2, password = COALESCE($3, password), photo = $4 WHERE id = $5 RETURNING *',
-            [name, email, hashedPassword, photo, id]
+            [name, email, password, photo, id] // almacena la contraseña en texto plano
         );
         return result.rows[0];
     },
@@ -37,8 +34,9 @@ const User = {
         return result.rows[0];
     },
 
-    validatePassword: async (password, hashedPassword) => {
-        return await bcrypt.compare(password, hashedPassword);
+    validatePassword: async (password, storedPassword) => {
+        // Ahora simplemente compara el texto plano
+        return password === storedPassword;
     }
 };
 
