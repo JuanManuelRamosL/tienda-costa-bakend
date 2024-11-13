@@ -19,13 +19,13 @@ const Pedido = {
         return result.rows[0];
       },
     
-      updateStatusByPaymentId: async (paymentId, data) => {
+      updateStatusByPaymentId:async (payament_id, data) => { 
         const result = await pool.query(
           'UPDATE pedidos SET pagado = $1 WHERE payment_id = $2 RETURNING *',
-          [data.pagado, paymentId]
+          [data.pagado, payament_id]
         );
         return result.rows[0];
-      },
+    },
 
     update: async (id, pedido) => {
         const { direccion, nombre, email, pagado } = pedido;
