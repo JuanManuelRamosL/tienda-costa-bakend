@@ -79,7 +79,6 @@ const recibeWebhook = async (req, res) => {
   }
 };
 
-const Pedido = require('../models/pedidosModel');
 
 // Controlador para eliminar una orden por ID
 const deleteOrder = async (req, res) => {
@@ -115,8 +114,18 @@ const deleteAllOrders = async (req, res) => {
   }
 };
 
+const getAll = async (req, res) => {
+  try {
+    const pedidos = await Pedido.getAll();
+    res.status(200).json(pedidos);
+  } catch (error) {
+    console.error('Error al eliminar todas las órdenes:', error);
+    res.status(500).json({ error: 'Error al eliminar todas las órdenes' });
+  }
+};
 
-module.exports = { createOrder, recibeWebhook,deleteOrder,deleteAllOrders }; 
+
+module.exports = { createOrder, recibeWebhook,deleteOrder,deleteAllOrders,getAll }; 
 
 
 // tarjeta : 5031 7557 3453 0604
