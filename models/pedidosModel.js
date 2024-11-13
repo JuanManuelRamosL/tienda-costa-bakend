@@ -39,6 +39,9 @@ const Pedido = {
     delete: async (id) => {
         await pool.query('DELETE FROM pedidos WHERE id = $1', [id]);
     },
+    deleteAll: async () => {
+        await pool.query('DELETE FROM pedidos'); // Eliminar todas las órdenes
+    },
 };
 
 module.exports = Pedido;

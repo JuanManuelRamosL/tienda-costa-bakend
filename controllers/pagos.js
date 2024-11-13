@@ -79,7 +79,44 @@ const recibeWebhook = async (req, res) => {
   }
 };
 
-module.exports = { createOrder, recibeWebhook }; 
+const Pedido = require('../models/pedidosModel');
+
+// Controlador para eliminar una orden por ID
+const deleteOrder = async (req, res) => {
+  const { id } = req.body; // Obtenemos el ID del pedido desde el body
+
+  if (!id) {
+    return res.status(400).json({ error: 'El ID del pedido es requerido' });
+  }
+
+  try {
+    // Verificar si la orden existe
+    const pedido = await Pedido.getById(id);
+    if (!pedido) {
+      return res.status(404).json({ error: 'Orden no encontrada' });
+    }
+
+    // Eliminar la orden
+    await Pedido.delete(id);
+    res.status(200).json({ message: 'Orden eliminada correctamente' });
+  } catch (error) {
+    console.error('Error al eliminar la orden:', error);
+    res.status(500).json({ error: 'Error al eliminar la orden' });
+  }
+};
+
+const deleteAllOrders = async (req, res) => {
+  try {
+    await Pedido.deleteAll();
+    res.status(200).json({ message: 'Todas las órdenes fueron eliminadas correctamente' });
+  } catch (error) {
+    console.error('Error al eliminar todas las órdenes:', error);
+    res.status(500).json({ error: 'Error al eliminar todas las órdenes' });
+  }
+};
+
+
+module.exports = { createOrder, recibeWebhook,deleteOrder,deleteAllOrders }; 
 
 
 // tarjeta : 5031 7557 3453 0604
