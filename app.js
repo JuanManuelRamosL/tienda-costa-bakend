@@ -21,3 +21,4 @@ app.use("/api",userRoutes)
 app.use("/api",pagosRouters)
 
 module.exports = app;
+//db: postgres://default:4ReY7bnFMHhQ@ep-proud-frost-a4ixyizh.us-east-1.aws.neon.tech:5432/verceldb?sslmode=require
