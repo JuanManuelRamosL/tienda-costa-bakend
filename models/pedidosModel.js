@@ -13,9 +13,10 @@ const Pedido = {
 
     create: async (pedidoData) => {
         const result = await pool.query(
-          'INSERT INTO pedidos (direccion, nombre, email, pagado, payment_id) VALUES ($1, $2, $3, $4, $5) RETURNING *',
-          [pedidoData.direccion, pedidoData.nombre, pedidoData.email, pedidoData.pagado, pedidoData.payment_id]
+            'INSERT INTO pedidos (direccion, telefono, nombre, email, pagado, payment_id) VALUES ($1, $2, $3, $4, $5, $6) RETURNING *',
+            [pedidoData.direccion, pedidoData.telefono, pedidoData.nombre, pedidoData.email, pedidoData.pagado, pedidoData.payment_id]
         );
+        
         return result.rows[0];
       },
     

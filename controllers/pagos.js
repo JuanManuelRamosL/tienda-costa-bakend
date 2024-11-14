@@ -13,7 +13,7 @@ let payament_id = null
 // Función para crear una orden
 const createOrder = async (req, res) => {
   try {
-    const { title, quantity, unit_price, direccion, nombre, email } = req.body;
+    const { title, quantity, unit_price, direccion, nombre, email ,telefono} = req.body;
 
     if (!title || !quantity || !unit_price || !direccion || !nombre || !email) {
       return res.status(400).json({ error: 'Todos los campos (title, quantity, unit_price, direccion, nombre y email) son requeridos' });
@@ -41,7 +41,8 @@ const createOrder = async (req, res) => {
       nombre,
       email,
       pagado: "no",
-      payment_id: response.id
+      payment_id: response.id,
+      telefono
     };
 
     const pedidoCreate = await Pedido.create(pedido);
