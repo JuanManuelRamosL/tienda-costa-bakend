@@ -20,7 +20,8 @@ const initializeDatabase = async () => {
             id SERIAL PRIMARY KEY,
             name VARCHAR(100) NOT NULL,
             description TEXT,
-            price DECIMAL(10, 2) NOT NULL
+            price DECIMAL(10, 2) NOT NULL,
+            image TEXT
         );
     `;
 
@@ -50,6 +51,7 @@ const initializeDatabase = async () => {
         CREATE TABLE IF NOT EXISTS pedidos (
             id SERIAL PRIMARY KEY,
             direccion VARCHAR(255) NOT NULL,
+            telefono VARCHAR(255) NOT NULL,
             nombre VARCHAR(100) NOT NULL,
             email VARCHAR(100) NOT NULL,
             pagado VARCHAR(10) DEFAULT '',

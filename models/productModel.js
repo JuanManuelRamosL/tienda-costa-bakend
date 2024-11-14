@@ -13,10 +13,10 @@ const Product = {
     },
 
     create: async (product) => {
-        const { name, description, price } = product;
+        const { name, description, price,image } = product;
         const result = await pool.query(
-            'INSERT INTO products (name, description, price) VALUES ($1, $2, $3) RETURNING *',
-            [name, description, price]
+            'INSERT INTO products (name, description, price,image) VALUES ($1, $2, $3, $4) RETURNING *',
+            [name, description, price,image]
         );
         return result.rows[0];
     },

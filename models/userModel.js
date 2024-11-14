@@ -4,6 +4,7 @@ const pool = require('../config/database');
 const User = {
     create: async (user) => {
         const { name, email, password, photo } = user;
+        console.log(user)
         const result = await pool.query(
             'INSERT INTO users (name, email, password, photo) VALUES ($1, $2, $3, $4) RETURNING *',
             [name, email, password, photo] // almacena la contraseña en texto plano
