@@ -56,7 +56,8 @@ const initializeDatabase = async () => {
             nombre VARCHAR(100) NOT NULL,
             email VARCHAR(100) NOT NULL,
             pagado VARCHAR(10) DEFAULT '',
-            payment_id VARCHAR(100) UNIQUE
+            payment_id VARCHAR(100) UNIQUE,
+            producto TEXT
         );
     `;
 
