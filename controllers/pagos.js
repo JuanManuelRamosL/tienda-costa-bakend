@@ -43,7 +43,8 @@ const createOrder = async (req, res) => {
       pagado: "no",
       payment_id: response.id,
       telefono,
-      producto:title
+      producto:title,
+      cantidad:quantity
     };
 
     const pedidoCreate = await Pedido.create(pedido);
