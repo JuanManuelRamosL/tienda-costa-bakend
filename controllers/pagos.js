@@ -70,7 +70,7 @@ const recibeWebhook = async (req, res) => {
   try {
     const { type } = req.query;
 
-   /*  // Si el tipo es 'payment' y tenemos un email guardado
+   // Si el tipo es 'payment' y tenemos un email guardado
     if (type === 'payment' && payament_id) {
       // Llamar a la función updateStatusByEmail con el email almacenado en memoria
       await Pedido.updateStatusByPaymentId(payament_id, { pagado: "si" });
@@ -79,9 +79,9 @@ const recibeWebhook = async (req, res) => {
       payament_id = null;
     }
 
-    res.sendStatus(200); */
+    res.sendStatus(200); 
 
-    if (type === 'payment' && payament_id) {
+   /*  if (type === 'payment' && payament_id) {
       // Actualizar el pedido como pagado
       const pedido = await Pedido.getByPaymentId(payament_id);
 
@@ -106,14 +106,14 @@ const recibeWebhook = async (req, res) => {
       });
 
       // Generar QR Code
-      const qrBuffer = await QRCode.toBuffer(info);
+      const qrBuffer = await QRCode.toBuffer(info); */
 
     /*   // Guardar en disco (opcional)
       fs.writeFileSync(`./codigos/${pedido.id}_barcode.png`, barcodeBuffer);
       fs.writeFileSync(`./codigos/${pedido.id}_qr.png`, qrBuffer); */
 
       // Guardar las rutas de los códigos en la base de datos
-     await Pedido.updateStatusByPaymentId(payament_id, {
+   /*   await Pedido.updateStatusByPaymentId(payament_id, {
        pagado: "si",
        barcode_url: barcodePath, // Ruta del código de barras
        qr_url: qrPath,           // Ruta del QR
@@ -125,7 +125,7 @@ const recibeWebhook = async (req, res) => {
       console.log('Códigos generados y almacenados correctamente.');
     }
 
-    res.sendStatus(200);
+    res.sendStatus(200); */
   } catch (error) {
     console.error("Error en el webhook de Mercado Pago:", error);
     res.sendStatus(500);
