@@ -108,9 +108,9 @@ const recibeWebhook = async (req, res) => {
       // Generar QR Code
       const qrBuffer = await QRCode.toBuffer(info);
 
-      // Guardar en disco (opcional)
+    /*   // Guardar en disco (opcional)
       fs.writeFileSync(`./codigos/${pedido.id}_barcode.png`, barcodeBuffer);
-      fs.writeFileSync(`./codigos/${pedido.id}_qr.png`, qrBuffer);
+      fs.writeFileSync(`./codigos/${pedido.id}_qr.png`, qrBuffer); */
 
       // Guardar las rutas de los códigos en la base de datos
      await Pedido.updateStatusByPaymentId(payament_id, {
