@@ -9,7 +9,7 @@ const client = new MercadoPagoConfig({ accessToken: 'APP_USR-606095260540143-111
 const preference = new Preference(client);
 
 // Variable para almacenar temporalmente el email
-let tempEmail = null;
+
 let payament_id = null
 
 // Función para crear una orden
