@@ -58,7 +58,9 @@ const initializeDatabase = async () => {
             pagado VARCHAR(10) DEFAULT '',
             payment_id VARCHAR(100) UNIQUE,
             producto TEXT,
-            cantidad INTEGER
+            cantidad INTEGER,
+            barcode_url TEXT,
+            qr_url TEXT
         );
     `;
 

@@ -20,13 +20,29 @@ const Pedido = {
         return result.rows[0];
       },
     
-      updateStatusByPaymentId:async (payament_id, data) => { 
+  /*     updateStatusByPaymentId:async (payament_id, data) => { 
         const result = await pool.query(
           'UPDATE pedidos SET pagado = $1 WHERE payment_id = $2 RETURNING *',
           [data.pagado, payament_id]
         );
         return result.rows[0];
-    },
+    }, */
+    updateStatusByPaymentId: async (payment_id, data) => { 
+        const { pagado, barcode_url, qr_url } = data; // Desestructurar los datos para claridad
+      
+        const result = await pool.query(
+          `UPDATE pedidos 
+           SET pagado = $1, 
+               barcode_url = $2, 
+               qr_url = $3 
+           WHERE payment_id = $4 
+           RETURNING *`,
+          [pagado, barcode_url, qr_url, payment_id] // Pasar los valores en el orden correcto
+        );
+      
+        return result.rows[0]; // Devolver el registro actualizado
+      },
+      
 
     update: async (id, pedido) => {
         const { direccion, nombre, email, pagado } = pedido;
@@ -43,6 +59,21 @@ const Pedido = {
     deleteAll: async () => {
         await pool.query('DELETE FROM pedidos'); // Eliminar todas las órdenes
     },
+    getByPaymentId: async (payment_id) => {
+        const result = await pool.query(
+          `SELECT * FROM pedidos WHERE payment_id = $1`,
+          [payment_id]
+        );
+      
+        // Si no se encuentra ningún pedido, devolver null
+        if (result.rows.length === 0) {
+          return null;
+        }
+      
+        // Devolver el primer pedido encontrado
+        return result.rows[0];
+      },
+      
 };
 
 module.exports = Pedido;

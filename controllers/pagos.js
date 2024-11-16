@@ -46,7 +46,9 @@ const createOrder = async (req, res) => {
       payment_id: response.id,
       telefono,
       producto:title,
-      cantidad:quantity
+      cantidad:quantity,
+      barcode_url:"",
+      qr_url:""
     };
 
     const pedidoCreate = await Pedido.create(pedido);
@@ -68,13 +70,59 @@ const recibeWebhook = async (req, res) => {
   try {
     const { type } = req.query;
 
-    // Si el tipo es 'payment' y tenemos un email guardado
+   /*  // Si el tipo es 'payment' y tenemos un email guardado
     if (type === 'payment' && payament_id) {
       // Llamar a la función updateStatusByEmail con el email almacenado en memoria
       await Pedido.updateStatusByPaymentId(payament_id, { pagado: "si" });
 
       // Limpiar la variable temporal después de usarla
       payament_id = null;
+    }
+
+    res.sendStatus(200); */
+
+    if (type === 'payment' && payament_id) {
+      // Actualizar el pedido como pagado
+      const pedido = await Pedido.getByPaymentId(payament_id);
+
+      if (!pedido) {
+        console.error("Pedido no encontrado para el payment_id:", payament_id);
+        return res.sendStatus(404);
+      }
+
+      // await Pedido.updateStatusByPaymentId(payament_id, { pagado: "si" });
+
+      // Preparar información para el código de barras o QR
+      const info = `Nombre: ${pedido.nombre}\nDirección: ${pedido.direccion}\nTeléfono: ${pedido.telefono}`;
+
+      // Generar código de barras
+      const barcodeBuffer = await bwipjs.toBuffer({
+        bcid: 'code128',      // Tipo de código de barras
+        text: info,           // Información codificada
+        scale: 3,             // Escala
+        height: 10,           // Altura de las barras
+        includetext: true,    // Mostrar texto legible
+        textxalign: 'center', // Alineación del texto
+      });
+
+      // Generar QR Code
+      const qrBuffer = await QRCode.toBuffer(info);
+
+      // Guardar en disco (opcional)
+      fs.writeFileSync(`./codigos/${pedido.id}_barcode.png`, barcodeBuffer);
+      fs.writeFileSync(`./codigos/${pedido.id}_qr.png`, qrBuffer);
+
+      // Guardar las rutas de los códigos en la base de datos
+     await Pedido.updateStatusByPaymentId(payament_id, {
+       pagado: "si",
+       barcode_url: barcodePath, // Ruta del código de barras
+       qr_url: qrPath,           // Ruta del QR
+         });
+
+      // Limpiar la variable temporal después de usarla
+      payament_id = null;
+
+      console.log('Códigos generados y almacenados correctamente.');
     }
 
     res.sendStatus(200);
@@ -180,10 +228,11 @@ module.exports = { createOrder, recibeWebhook,deleteOrder,deleteAllOrders,getAll
       fs.writeFileSync(`./codigos/${pedido.id}_qr.png`, qrBuffer);
 
       // Guardar las rutas de los códigos en la base de datos
-      await Pedido.update(pedido.id, {
-        barcodeUrl: `/codigos/${pedido.id}_barcode.png`,
-        qrUrl: `/codigos/${pedido.id}_qr.png`,
-      });
+     await Pedido.updateStatusByPaymentId(paymentId, {
+  pagado: "si",
+  barcode_url: barcodePath, // Ruta del código de barras
+  qr_url: qrPath,           // Ruta del QR
+});
 
       // Limpiar la variable temporal después de usarla
       payament_id = null;
