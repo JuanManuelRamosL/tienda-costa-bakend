@@ -20,14 +20,14 @@ const Pedido = {
         return result.rows[0];
       },
     
-  /*     updateStatusByPaymentId:async (payament_id, data) => { 
+      updateStatusByPaymentId:async (payament_id, data) => { 
         const result = await pool.query(
           'UPDATE pedidos SET pagado = $1 WHERE payment_id = $2 RETURNING *',
           [data.pagado, payament_id]
         );
         return result.rows[0];
-    }, */
-    updateStatusByPaymentId: async (payment_id, data) => { 
+    }, 
+ /*    updateStatusByPaymentId: async (payament_id, data) => { 
         const { pagado, barcode_url, qr_url } = data; // Desestructurar los datos para claridad
       
         const result = await pool.query(
@@ -37,11 +37,11 @@ const Pedido = {
                qr_url = $3 
            WHERE payment_id = $4 
            RETURNING *`,
-          [pagado, barcode_url, qr_url, payment_id] // Pasar los valores en el orden correcto
+          [pagado, barcode_url, qr_url, payament_id] // Pasar los valores en el orden correcto
         );
       
         return result.rows[0]; // Devolver el registro actualizado
-      },
+      }, */
       
 
     update: async (id, pedido) => {
