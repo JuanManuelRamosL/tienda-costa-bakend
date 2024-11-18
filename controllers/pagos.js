@@ -1,15 +1,12 @@
  const { MercadoPagoConfig, Preference } = require('mercadopago');
 const Pedido = require('../models/pedidosModel');
-const bwipjs = require('bwip-js'); // Para códigos de barras
-const QRCode = require('qrcode'); // Para QR codes
-const fs = require('fs'); // Para guardar los códigos localmente (opcional)
+const { getChannel } = require('../rabbitmq');
 
 // Configuración de Mercado Pago con el token de acceso
 const client = new MercadoPagoConfig({ accessToken: 'APP_USR-606095260540143-111014-79210c1a47e51601f405331300802dfc-2090297928' });
 const preference = new Preference(client);
 
 // Variable para almacenar temporalmente el email
-
 let payament_id = null
 
 // Función para crear una orden
@@ -91,35 +88,25 @@ const recibeWebhook = async (req, res) => {
       }
 
       // await Pedido.updateStatusByPaymentId(payament_id, { pagado: "si" });
-
-      // Preparar información para el código de barras o QR
-      const info = `Nombre: ${pedido.nombre}\nDirección: ${pedido.direccion}\nTeléfono: ${pedido.telefono}`;
-
-      // Generar código de barras
-      const barcodeBuffer = await bwipjs.toBuffer({
-        bcid: 'code128',      // Tipo de código de barras
-        text: info,           // Información codificada
-        scale: 3,             // Escala
-        height: 10,           // Altura de las barras
-        includetext: true,    // Mostrar texto legible
-        textxalign: 'center', // Alineación del texto
-      });
-
-      // Generar QR Code
-      const qrBuffer = await QRCode.toBuffer(info);
-
-      // Guardar en disco (opcional)
-      fs.writeFileSync(`./codigos/${pedido.id}_barcode.png`, barcodeBuffer);
-      fs.writeFileSync(`./codigos/${pedido.id}_qr.png`, qrBuffer);
-
       // Guardar las rutas de los códigos en la base de datos
      await Pedido.updateStatusByPaymentId(payament_id, {
        pagado: "si",
-       barcode_url: barcodePath, // Ruta del código de barras
-       qr_url: qrPath,           // Ruta del QR
+       barcode_url: "", // Ruta del código de barras
+       qr_url: "",           // Ruta del QR
          });
 
-      // Limpiar la variable temporal después de usarla
+         const message = {
+          email: pedido.email,
+          nombre: pedido.nombre,
+          producto: pedido.producto,
+          cantidad: pedido.cantidad,
+          direccion: pedido.direccion,
+        };
+  
+        // Publicar en RabbitMQ
+        const channel = getChannel();
+        channel.sendToQueue('email.notifications', Buffer.from(JSON.stringify(message)));
+        console.log('Mensaje publicado en RabbitMQ:', message);
       payament_id = null;
 
       console.log('Códigos generados y almacenados correctamente.');
@@ -190,59 +177,3 @@ module.exports = { createOrder, recibeWebhook,deleteOrder,deleteAllOrders,getAll
 //user TESTUSER2035541374
 // psw  l6unw3aPJQ
 
-
-// codigo de creacion de qr y codigo de barras hay que hacer un campo en la bd product para guardarlo
-/* const recibeWebhook = async (req, res) => {
-  try {
-    const { type, 'data.id': paymentId } = req.query;
-
-    if (type === 'payment' && payament_id) {
-      // Actualizar el pedido como pagado
-      const pedido = await Pedido.getByPaymentId(payament_id);
-
-      if (!pedido) {
-        console.error("Pedido no encontrado para el payment_id:", payament_id);
-        return res.sendStatus(404);
-      }
-
-      await Pedido.updateStatusByPaymentId(payament_id, { pagado: "si" });
-
-      // Preparar información para el código de barras o QR
-      const info = `Nombre: ${pedido.nombre}\nDirección: ${pedido.direccion}\nTeléfono: ${pedido.telefono}`;
-
-      // Generar código de barras
-      const barcodeBuffer = await bwipjs.toBuffer({
-        bcid: 'code128',      // Tipo de código de barras
-        text: info,           // Información codificada
-        scale: 3,             // Escala
-        height: 10,           // Altura de las barras
-        includetext: true,    // Mostrar texto legible
-        textxalign: 'center', // Alineación del texto
-      });
-
-      // Generar QR Code
-      const qrBuffer = await QRCode.toBuffer(info);
-
-      // Guardar en disco (opcional)
-      fs.writeFileSync(`./codigos/${pedido.id}_barcode.png`, barcodeBuffer);
-      fs.writeFileSync(`./codigos/${pedido.id}_qr.png`, qrBuffer);
-
-      // Guardar las rutas de los códigos en la base de datos
-     await Pedido.updateStatusByPaymentId(paymentId, {
-  pagado: "si",
-  barcode_url: barcodePath, // Ruta del código de barras
-  qr_url: qrPath,           // Ruta del QR
-});
-
-      // Limpiar la variable temporal después de usarla
-      payament_id = null;
-
-      console.log('Códigos generados y almacenados correctamente.');
-    }
-
-    res.sendStatus(200);
-  } catch (error) {
-    console.error("Error en el webhook de Mercado Pago:", error);
-    res.sendStatus(500);
-  }
-}; */
