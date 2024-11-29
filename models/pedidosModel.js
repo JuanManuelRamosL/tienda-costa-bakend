@@ -73,7 +73,23 @@ const Pedido = {
         // Devolver el primer pedido encontrado
         return result.rows[0];
       },
-      
+      updateStatus: async (id, estado) => {
+        try {
+            const result = await pool.query(
+                'UPDATE pedidos SET estado = $1 WHERE id = $2 RETURNING *',
+                [estado, id]
+            );
+
+            if (result.rows.length === 0) {
+                throw new Error(`Pedido con id ${id} no encontrado`);
+            }
+
+            return result.rows[0]; // Devuelve el pedido actualizado
+        } catch (error) {
+            console.error('Error al actualizar el estado del pedido:', error);
+            throw error; // Lanza el error para que el controlador lo maneje
+        }
+    },
 };
 
 module.exports = Pedido;

@@ -12,7 +12,7 @@ let payament_id = null
 // Función para crear una orden
 const createOrder = async (req, res) => {
   try {
-    const { title, quantity, unit_price, direccion, nombre, email ,telefono} = req.body;
+    const { title, quantity, unit_price, direccion, nombre, email ,telefono,userId} = req.body;
 
     if (!title || !quantity || !unit_price || !direccion || !nombre || !email) {
       return res.status(400).json({ error: 'Todos los campos (title, quantity, unit_price, direccion, nombre y email) son requeridos' });
@@ -45,8 +45,10 @@ const createOrder = async (req, res) => {
       producto:title,
       cantidad:quantity,
       barcode_url:"",
-      qr_url:""
+      qr_url:"",
+      userId
     };
+    //agregar userid despues en el front hacemos la peticion get a pedidos con el id del user 
 
     const pedidoCreate = await Pedido.create(pedido);
     res.json({ preferenceId: response.id, initPoint: response.init_point, url: response.sandbox_init_point });
@@ -105,6 +107,7 @@ const recibeWebhook = async (req, res) => {
   
         // Publicar en RabbitMQ
         const channel = getChannel();
+        channel.assertQueue('email.notifications', { durable: true });
         channel.sendToQueue('email.notifications', Buffer.from(JSON.stringify(message)));
         console.log('Mensaje publicado en RabbitMQ:', message);
       payament_id = null;
@@ -164,8 +167,24 @@ const getAll = async (req, res) => {
   }
 };
 
+const actualizarEstado = async (req, res) => {
+  const { id } = req.params;
+  const { estado } = req.body;
 
-module.exports = { createOrder, recibeWebhook,deleteOrder,deleteAllOrders,getAll }; 
+  if (!estado) {
+      return res.status(400).json({ error: 'El campo estado es requerido' });
+  }
+
+  try {
+      const pedidoActualizado = await Pedido.updateStatus(id, estado);
+      res.status(200).json(pedidoActualizado);
+  } catch (error) {
+      console.error('Error al actualizar el estado del pedido:', error);
+      res.status(500).json({ error: 'Error al actualizar el estado del pedido' });
+  }
+};
+
+module.exports = { createOrder, recibeWebhook,deleteOrder,deleteAllOrders,getAll,actualizarEstado }; 
 
 
 // tarjeta : 5031 7557 3453 0604

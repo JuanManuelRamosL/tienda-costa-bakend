@@ -60,10 +60,13 @@ const initializeDatabase = async () => {
             producto TEXT,
             cantidad INTEGER,
             barcode_url TEXT,
-            qr_url TEXT
+            qr_url TEXT,
+            userId VARCHAR(100),
+            estado VARCHAR(100)
         );
     `;
-
+//agregar userid opccional en la tabla pedidos
+// agregar estado armado enviado etc 
     try {
         await pool.query(createProductsTable);
         await pool.query(createUsersTable);
