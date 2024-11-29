@@ -184,7 +184,31 @@ const actualizarEstado = async (req, res) => {
   }
 };
 
-module.exports = { createOrder, recibeWebhook,deleteOrder,deleteAllOrders,getAll,actualizarEstado }; 
+const obtenerPedidoUser = async (req, res) => {
+  let { id } = req.params;
+
+  if (!id) {
+      return res.status(400).json({ error: 'El campo id es requerido' });
+  }
+
+  // Convertimos el id a string explícitamente
+  id = id.toString();
+
+  try {
+      const pedido = await Pedido.getByUserId(id);
+      if (pedido.length === 0) {
+          return res.status(404).json({ error: 'No se encontraron pedidos para este usuario' });
+      }
+
+      res.status(200).json(pedido);
+  } catch (error) {
+      console.error('Error al obtener los pedidos del usuario:', error);
+      res.status(500).json({ error: 'Error al obtener los pedidos del usuario' });
+  }
+};
+
+
+module.exports = { createOrder, recibeWebhook,deleteOrder,deleteAllOrders,getAll,actualizarEstado,obtenerPedidoUser }; 
 
 
 // tarjeta : 5031 7557 3453 0604

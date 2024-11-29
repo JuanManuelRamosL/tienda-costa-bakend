@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const {createOrder,  recibeWebhook, deleteOrder, deleteAllOrders, getAll, actualizarEstado} = require("../controllers/pagos");
+const {createOrder,  recibeWebhook, deleteOrder, deleteAllOrders, getAll, actualizarEstado, obtenerPedidoUser} = require("../controllers/pagos");
 
 
 
@@ -11,5 +11,6 @@ router.post("/webhook",recibeWebhook)
 router.delete("/order",deleteOrder)
 router.delete('/orders', deleteAllOrders);
 router.patch('/pedidos/:id/estado', actualizarEstado);
+router.get('/pedidos/:id', obtenerPedidoUser);
 //hacer un get by id
 module.exports = router;

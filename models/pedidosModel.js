@@ -90,6 +90,14 @@ const Pedido = {
             throw error; // Lanza el error para que el controlador lo maneje
         }
     },
+    getByUserId: async (userId) => {
+        const result = await pool.query(
+            'SELECT * FROM pedidos WHERE userId = $1',
+            [userId]
+        );
+        return result.rows; // Devuelve todos los pedidos asociados al userId
+    },
+    
 };
 
 module.exports = Pedido;
