@@ -97,7 +97,7 @@ const recibeWebhook = async (req, res) => {
        qr_url: "",           // Ruta del QR
          });
 
-         const message = {
+/*          const message = {
           email: pedido.email,
           nombre: pedido.nombre,
           producto: pedido.producto,
@@ -109,7 +109,7 @@ const recibeWebhook = async (req, res) => {
         const channel = getChannel();
         channel.assertQueue('email.notifications', { durable: true });
         channel.sendToQueue('email.notifications', Buffer.from(JSON.stringify(message)));
-        console.log('Mensaje publicado en RabbitMQ:', message);
+        console.log('Mensaje publicado en RabbitMQ:', message); */
       payament_id = null;
 
       console.log('Códigos generados y almacenados correctamente.');
