@@ -31,9 +31,9 @@ const userController = {
     },
 
     loginUser: async (req, res) => {
-        const { email, name, password } = req.body;
+        const { email,  password } = req.body;
         try {
-            const user = await User.findByEmailOrName(email, name);
+            const user = await User.findByEmailOrName(email);
             if (!user || (password && !(await User.validatePassword(password, user.password)))) {
                 return res.status(401).json({ error: 'Credenciales incorrectas.' });
             }
@@ -41,7 +41,31 @@ const userController = {
         } catch (error) {
             res.status(400).json({ error: 'Error al iniciar sesión.' });
         }
+    },
+ obtenerUsuarioPorEmail : async (req, res) => {
+        let { email } = req.params;
+    
+        if (!email) {
+            return res.status(400).json({ error: 'El campo email es requerido' });
+        }
+    
+        try {
+            email = String(email).trim(); // Asegurarse de que sea un string limpio
+            console.log('Buscando usuario con email:', email); // Log para verificar el email
+            const usuario = await User.findByEmail(email);
+    
+            if (!usuario) {
+                return res.status(404).json({ error: 'Usuario no encontrado' });
+            }
+    
+            res.status(200).json(usuario);
+        } catch (error) {
+            console.error('Error al obtener el usuario por email:', error);
+            res.status(500).json({ error: 'Error al obtener el usuario' });
+        }
     }
+    
+    
 };
 
 module.exports = userController;

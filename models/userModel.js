@@ -25,8 +25,8 @@ const User = {
         await pool.query('DELETE FROM users WHERE id = $1', [id]);
     },
 
-    findByEmailOrName: async (email, name) => {
-        const result = await pool.query('SELECT * FROM users WHERE email = $1 OR name = $2', [email, name]);
+    findByEmailOrName: async (email) => {
+        const result = await pool.query('SELECT * FROM users WHERE email = $1', [email]);
         return result.rows[0];
     },
 
@@ -38,7 +38,14 @@ const User = {
     validatePassword: async (password, storedPassword) => {
         // Ahora simplemente compara el texto plano
         return password === storedPassword;
-    }
+    },
+    findByEmail: async (email) => {
+        console.log('Email recibido:', email); // Log para depuración
+        const result = await pool.query('SELECT * FROM users WHERE email = $1', [email]);
+        console.log('Resultado de la consulta:', result.rows); // Log para verificar los resultados
+        return result.rows[0]; // Devuelve el primer usuario encontrado o null si no existe
+    },
+    
 };
 
 module.exports = User;
