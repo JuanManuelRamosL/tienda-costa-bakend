@@ -22,7 +22,8 @@ const initializeDatabase = async () => {
             description TEXT,
             price DECIMAL(10, 2) NOT NULL,
             image TEXT,
-            category TEXT
+            category TEXT,
+            stock INTEGER
         );
     `;
 

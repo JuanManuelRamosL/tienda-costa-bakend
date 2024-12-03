@@ -13,10 +13,10 @@ const Product = {
     },
 
     create: async (product) => {
-        const { name, description, price,image,category } = product;
+        const { name, description, price,image,category,stock } = product;
         const result = await pool.query(
-            'INSERT INTO products (name, description, price,image,category) VALUES ($1, $2, $3, $4, $5) RETURNING *',
-            [name, description, price,image,category]
+            'INSERT INTO products (name, description, price,image,category,stock) VALUES ($1, $2, $3, $4, $5,$6) RETURNING *',
+            [name, description, price,image,category,stock]
         );
         return result.rows[0];
     },
@@ -27,6 +27,27 @@ const Product = {
             'UPDATE products SET name = $1, description = $2, price = $3 WHERE id = $4 RETURNING *',
             [name, description, price, id]
         );
+        return result.rows[0];
+    },
+    updateStock: async (id, stock) => {
+        const result = await pool.query(
+            'UPDATE products SET stock = $1 WHERE id = $2 RETURNING *',
+            [stock, id]
+        );
+        return result.rows[0];
+    },
+
+    decreaseStock: async (id, quantity) => {
+        const result = await pool.query(
+            `UPDATE products 
+             SET stock = stock - $1 
+             WHERE id = $2 AND stock >= $1 
+             RETURNING *`, // Asegura que no haya stock negativo
+            [quantity, id]
+        );
+        if (result.rowCount === 0) {
+            throw new Error('Stock insuficiente o producto no encontrado.');
+        }
         return result.rows[0];
     },
 
