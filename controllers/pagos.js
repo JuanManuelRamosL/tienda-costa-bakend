@@ -115,7 +115,9 @@ const recibeWebhook = async (req, res) => {
         const productId = productId1; // Asegúrate de que el pedido tenga un campo para el ID del producto
         const quantity = pedido.cantidad; // Asegúrate de que el pedido tenga un campo para la cantidad
         try {
-          const updatedProductStock = await Product.decreaseStock(productId, quantity || 1);
+          console.log(productId,quantity)
+
+          const updatedProductStock = await Product.decreaseStock(1,  1);
           console.log(`Stock actualizado para producto ${productId}:`, updatedProductStock);
         } catch (error) {
           console.error("Error al actualizar el stock del producto:", error.message);
