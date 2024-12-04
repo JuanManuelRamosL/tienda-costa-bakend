@@ -1,6 +1,7 @@
  const { MercadoPagoConfig, Preference } = require('mercadopago');
 const Pedido = require('../models/pedidosModel');
 const { getChannel } = require('../rabbitmq');
+const Product = require('../models/productModel');
 
 // Configuración de Mercado Pago con el token de acceso
 const client = new MercadoPagoConfig({ accessToken: 'APP_USR-606095260540143-111014-79210c1a47e51601f405331300802dfc-2090297928' });
@@ -8,11 +9,11 @@ const preference = new Preference(client);
 
 // Variable para almacenar temporalmente el email
 let payament_id = null
-
+let productId1 = null
 // Función para crear una orden
 const createOrder = async (req, res) => {
   try {
-    const { title, quantity, unit_price, direccion, nombre, email ,telefono,userId} = req.body;
+    const { title, quantity, unit_price, direccion, nombre, email ,telefono,userId,productId} = req.body;
 
     if (!title || !quantity || !unit_price || !direccion || !nombre || !email) {
       return res.status(400).json({ error: 'Todos los campos (title, quantity, unit_price, direccion, nombre y email) son requeridos' });
@@ -34,7 +35,7 @@ const createOrder = async (req, res) => {
     // Guardar el email temporalmente
     //tempEmail = email;
     payament_id=response.id
-
+    productId1 =productId 
     const pedido = {
       direccion,
       nombre,
@@ -110,6 +111,15 @@ const recibeWebhook = async (req, res) => {
         channel.assertQueue('email.notifications', { durable: true });
         channel.sendToQueue('email.notifications', Buffer.from(JSON.stringify(message)));
         console.log('Mensaje publicado en RabbitMQ:', message); */
+
+        const productId = productId1; // Asegúrate de que el pedido tenga un campo para el ID del producto
+        const quantity = pedido.cantidad; // Asegúrate de que el pedido tenga un campo para la cantidad
+        try {
+          const updatedProductStock = await Product.decreaseStock(productId, quantity || 1);
+          console.log(`Stock actualizado para producto ${productId}:`, updatedProductStock);
+        } catch (error) {
+          console.error("Error al actualizar el stock del producto:", error.message);
+        }
       payament_id = null;
 
       console.log('Códigos generados y almacenados correctamente.');
