@@ -3,9 +3,10 @@ const Pedido = require('../models/pedidosModel');
 const { getChannel } = require('../rabbitmq');
 
 // Configuración de Mercado Pago con el token de acceso
-const client = new MercadoPagoConfig({ accessToken: 'APP_USR-606095260540143-111014-79210c1a47e51601f405331300802dfc-2090297928' });
+const client = new MercadoPagoConfig({ accessToken: 'APP_USR-454029493775761-120922-f8313c5d85da1fa5a1dcae1cfa22d181-510213617' });
 const preference = new Preference(client);
-
+// credenciales produccion APP_USR-4239051252843673-111014-8adace428345b1f324f381fc79942b37-370915835
+// credencial de prueba APP_USR-606095260540143-111014-79210c1a47e51601f405331300802dfc-2090297928
 // Variable para almacenar temporalmente el email
 let payament_id = null
 
