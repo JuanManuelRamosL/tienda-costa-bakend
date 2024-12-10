@@ -14,9 +14,9 @@ let productId1 = null
 // Función para crear una orden
 const createOrder = async (req, res) => {
   try {
-    const { title, quantity, unit_price, direccion, nombre, email ,telefono,userId,productId} = req.body;
+    const { title, quantity, unit_price, direccion, nombre, email ,telefono,userId,productId,codigo_postal} = req.body;
 
-    if (!title || !quantity || !unit_price || !direccion || !nombre || !email) {
+    if (!title || !quantity || !unit_price || !direccion || !nombre || !email || codigo_postal) {
       return res.status(400).json({ error: 'Todos los campos (title, quantity, unit_price, direccion, nombre y email) son requeridos' });
     }
 
@@ -48,7 +48,8 @@ const createOrder = async (req, res) => {
       cantidad:quantity,
       barcode_url:"",
       qr_url:"",
-      userId
+      userId,
+      codigo_postal
     };
     //agregar userid despues en el front hacemos la peticion get a pedidos con el id del user 
 

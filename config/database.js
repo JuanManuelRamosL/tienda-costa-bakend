@@ -63,7 +63,8 @@ const initializeDatabase = async () => {
             barcode_url TEXT,
             qr_url TEXT,
             userId VARCHAR(100),
-            estado VARCHAR(100)
+            estado VARCHAR(100),
+            codigo_postal VARCHAR(100)
         );
     `;
 //agregar userid opccional en la tabla pedidos
