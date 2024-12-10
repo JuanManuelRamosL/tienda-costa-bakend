@@ -16,7 +16,7 @@ const createOrder = async (req, res) => {
   try {
     const { title, quantity, unit_price, direccion, nombre, email ,telefono,userId,productId,codigo_postal} = req.body;
 
-    if (!title || !quantity || !unit_price || !direccion || !nombre || !email || codigo_postal) {
+    if (!title || !quantity || !unit_price || !direccion || !nombre || !email || !codigo_postal) {
       return res.status(400).json({ error: 'Todos los campos (title, quantity, unit_price, direccion, nombre y email) son requeridos' });
     }
 
